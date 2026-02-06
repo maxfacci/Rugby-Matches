@@ -2,6 +2,7 @@ let startTimestamp = null;
 let elapsedSeconds = 0;
 let timerInterval = null;
 let matchFinished = false;
+let firstHalfEnded = false;
 
 let homeScore = 0;
 let awayScore = 0;
@@ -11,11 +12,13 @@ const homeScoreEl = document.getElementById("home-score");
 const awayScoreEl = document.getElementById("away-score");
 const eventsList = document.getElementById("events-list");
 
-let homeTeam = prompt("Nome squadra di casa") || "Casa";
-let awayTeam = prompt("Nome squadra ospite") || "Ospiti";
+let homeTeam = (prompt("Nome squadra di casa") || "Casa").toUpperCase();
+let awayTeam = (prompt("Nome squadra ospite") || "Ospiti").toUpperCase();
 
 document.querySelectorAll(".team h3")[0].textContent = homeTeam;
 document.querySelectorAll(".team h3")[1].textContent = awayTeam;
+document.querySelectorAll(".team h3")[0].innerHTML = highlightRangers(homeTeam);
+document.querySelectorAll(".team h3")[1].innerHTML = highlightRangers(awayTeam);
 
 function updateTimerDisplay() {
     const m = Math.floor(elapsedSeconds / 60).toString().padStart(2, "0");
@@ -51,6 +54,18 @@ function resetTimer() {
     saveMatch();
 }
 
+function endFirstHalf() {
+    if (firstHalfEnded) return;
+
+    if (!confirm("Confermi la fine del primo tempo?")) return;
+
+    pauseTimer();
+    firstHalfEnded = true;
+
+    logEvent("FINE PRIMO TEMPO");
+    saveMatch();
+}
+
 function startSecondHalf() {
     if (!confirm("Avviare il secondo tempo da 35:00?")) return;
 
@@ -64,16 +79,16 @@ function startSecondHalf() {
 document.getElementById("start-timer").onclick = startTimer;
 document.getElementById("pause-timer").onclick = pauseTimer;
 document.getElementById("reset-timer").onclick = resetTimer;
+document.getElementById("end-first-half").onclick = endFirstHalf;
 document.getElementById("second-half").onclick = startSecondHalf;
 document.getElementById("end-match").onclick = endMatch;
 
 function getStatus() {
     if (matchFinished) return "FINITA";
+    if (firstHalfEnded && elapsedSeconds < 35 * 60) return "INTERVALLO";
     if (elapsedSeconds < 35 * 60) return "PRIMO TEMPO";
-    if (elapsedSeconds < 80 * 60) return "SECONDO TEMPO";
-    return "FINITA";
+    return "SECONDO TEMPO";
 }
-
 
 function logEvent(text) {
     const e = `[${timeDisplay.textContent}] ${text} | ${homeScore} – ${awayScore}`;
@@ -142,15 +157,32 @@ document.getElementById("save-events").onclick = () => {
 };
 
 function saveMatch() {
-    firebase.database().ref(MATCH_ID).set({
-        homeTeam,
-        awayTeam,
-        homeScore,
-        awayScore,
-        status: getStatus(),
-        finished: matchFinished,
-        updatedAt: Date.now()
+    firebase.database().ref(MATCH_ID).once("value").then(snapshot => {
+        const data = snapshot.val();
+        if (!data) return;
+
+        homeTeam = data.homeTeam.toUpperCase();
+        awayTeam = data.awayTeam.toUpperCase();
+        homeScore = data.homeScore;
+        awayScore = data.awayScore;
+
+        firstHalfEnded = data.firstHalfEnded || false;
+        matchFinished = data.finished || false;
+
+        document.querySelectorAll(".team h3")[0].innerHTML = highlightRangers(homeTeam);
+        document.querySelectorAll(".team h3")[1].innerHTML = highlightRangers(awayTeam);
+
+        homeScoreEl.textContent = homeScore;
+        awayScoreEl.textContent = awayScore;
+
+        updateTimerDisplay();
     });
+}
+
+function highlightRangers(name) {
+    return name.replace(/RANGERS/gi, match =>
+        `<span class="rangers">${match}</span>`
+    );
 }
 
 updateTimerDisplay();

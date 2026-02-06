@@ -42,5 +42,21 @@ function listen(matchId, elementId) {
     });
 }
 
+function highlightRangers(name) {
+    return name.replace(/RANGERS/gi, match =>
+        `<span class="rangers">${match}</span>`
+    );
+}
+
+el.innerHTML = `
+    <div class="teams">
+        <span>${highlightRangers(m.homeTeam)}</span>
+        <span>${m.homeScore} – ${m.awayScore}</span>
+        <span>${highlightRangers(m.awayTeam)}</span>
+    </div>
+    <div class="status">${m.status}</div>
+`;
+
+
 listen("match_1", "match1");
 listen("match_2", "match2");
