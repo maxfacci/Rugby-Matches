@@ -1,5 +1,28 @@
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Rugby – Riepilogo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+
+<h1>Riepilogo Partite</h1>
+
+<nav class="nav-buttons">
+    <a href="partita_1.html" class="nav-btn">Partita 1</a>
+    <a href="partita_2.html" class="nav-btn">Partita 2</a>
+</nav>
+
+<div id="match1" class="match-box"></div>
+<div id="match2" class="match-box"></div>
 
 <script>
 firebase.initializeApp({
@@ -13,30 +36,7 @@ firebase.initializeApp({
 });
 </script>
 
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <title>Rugby Match Manager</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-</head>
-<body>
-
-<h1>Riepilogo Partite</h1>
-
-<div id="match1" class="match-box"></div>
-<div id="match2" class="match-box"></div>
-
 <script src="riepilogo.js"></script>
-
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
-}
-</script>
 
 </body>
 </html>

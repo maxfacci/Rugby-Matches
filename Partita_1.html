@@ -1,5 +1,44 @@
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Partita 1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+
+<a href="index.html" class="nav-btn">← Riepilogo</a>
+
+<h1>Partita</h1>
+
+<div id="timer">
+    <span id="time-display">00:00</span><br>
+    <button id="start-timer">Avvia</button>
+    <button id="pause-timer">Pausa</button>
+    <button id="second-half">Secondo Tempo</button>
+    <button id="end-first-half">Fine 1° Tempo</button>
+    <button id="end-match">Fine Partita</button>
+    <button id="reset-timer">Reset</button>
+</div>
+
+<div id="scoreboard">
+    <div class="team">
+        <h3></h3>
+        <p id="home-score">0</p>
+    </div>
+    <div class="team">
+        <h3></h3>
+        <p id="away-score">0</p>
+    </div>
+</div>
+
+<ul id="events-list"></ul>
 
 <script>
 firebase.initializeApp({
@@ -11,61 +50,10 @@ firebase.initializeApp({
   messagingSenderId: "202503600649",
   appId: "1:202503600649:web:31f940dc24dba16c6bd6d8"
 });
+
+const MATCH_ID = "match_1"; // match_2 nell'altro file
 </script>
 
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <title>Partita 1</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-<header>
-    <h1>Partita 1</h1>
-</header>
-
-<main>
-
-<section id="match-control">
-
-    <div id="timer">
-        <span id="time-display">00:00</span><br>
-        <button id="start-timer">Avvia</button>
-        <button id="pause-timer">Pausa</button>
-        <button id="end-first-half">Fine 1° Tempo</button>
-        <button id="second-half">Secondo Tempo</button>
-        <button id="end-match">Fine Partita</button>
-        <button id="reset-timer">Reset</button>
-    </div>
-
-    <div id="scoreboard">
-        <div class="team">
-            <h3>Squadra di casa</h3>
-            <p id="home-score" class="score">0</p>
-        </div>
-
-        <div class="team">
-            <h3>Squadra ospite</h3>
-            <p id="away-score" class="score">0</p>
-        </div>
-    </div>
-
-</section>
-
-<section id="event-log">
-    <h2>Eventi</h2>
-    <button id="save-events">Salva eventi (.txt)</button>
-    <ul id="events-list"></ul>
-</section>
-
-</main>
-
-<script>
-const MATCH_ID = "match_1";
-</script>
 <script src="script_partita.js"></script>
 
 </body>
