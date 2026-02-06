@@ -48,16 +48,31 @@
 
 
 <div id="scoreboard">
+
     <div class="team">
-        <h3></h3>
+        <h3 id="home-name"></h3>
         <p id="home-score">0</p>
+        <div class="score-buttons">
+            <button class="score-btn" data-team="home" data-points="5">Meta</button>
+            <button class="score-btn" data-team="home" data-points="2">Trasformazione</button>
+            <button class="score-btn" data-team="home" data-points="3">Punizione / Drop</button>
+            <button class="score-btn" data-team="home" data-points="-1">-1</button>
+            <button class="score-btn yellow" data-team="home" data-points="0">Giallo</button>
+        </div>
     </div>
+
     <div class="team">
-        <h3></h3>
+        <h3 id="away-name"></h3>
         <p id="away-score">0</p>
+        <div class="score-buttons">
+            <button class="score-btn" data-team="away" data-points="5">Meta</button>
+            <button class="score-btn" data-team="away" data-points="2">Trasformazione</button>
+            <button class="score-btn" data-team="away" data-points="3">Punizione / Drop</button>
+            <button class="score-btn" data-team="away" data-points="-1">-1</button>
+            <button class="score-btn yellow" data-team="away" data-points="0">Giallo</button>
+        </div>
     </div>
 </div>
-
 <ul id="events-list"></ul>
 
 <script>

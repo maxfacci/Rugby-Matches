@@ -26,8 +26,8 @@ function highlightRangers(name) {
 let homeTeam = (prompt("Nome squadra di casa") || "CASA").toUpperCase();
 let awayTeam = (prompt("Nome squadra ospite") || "OSPITI").toUpperCase();
 
-document.querySelectorAll(".team h3")[0].innerHTML = highlightRangers(homeTeam);
-document.querySelectorAll(".team h3")[1].innerHTML = highlightRangers(awayTeam);
+document.getElementById("home-name").innerHTML = highlightRangers(homeTeam);
+document.getElementById("away-name").innerHTML = highlightRangers(awayTeam);
 
 // 🔹 TIMER
 function updateTimerDisplay() {
