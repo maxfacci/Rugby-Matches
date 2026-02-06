@@ -11,6 +11,13 @@ const timeDisplay = document.getElementById("time-display");
 const homeScoreEl = document.getElementById("home-score");
 const awayScoreEl = document.getElementById("away-score");
 
+function logEvent(text) {
+    const ul = document.getElementById("events-list");
+    const li = document.createElement("li");
+    li.textContent = `[${timeDisplay.textContent}] ${text}`;
+    ul.appendChild(li);
+}
+
 function highlightRangers(name) {
     return name.replace(/RANGERS/gi, m => `<span class="rangers">${m}</span>`);
 }
@@ -128,3 +135,35 @@ document.getElementById("end-match").onclick = () => {
     pauseTimer();
     saveMatch();
 };
+
+document.querySelectorAll(".score-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+        if (matchFinished) return;
+
+        const team = btn.dataset.team;
+        const points = parseInt(btn.dataset.points);
+
+        // Se è giallo
+        if (btn.textContent.toLowerCase().includes("giallo")) {
+            const player = prompt("Numero del giocatore (cartellino giallo):");
+            if (!player) return;
+            logEvent(`GIALLO ${team === "home" ? homeTeam : awayTeam} #${player}`);
+            saveMatch();
+            return;
+        }
+
+        // Eventi con giocatore
+        if (points > 0) {
+            const player = prompt("Numero del giocatore:");
+            if (!player) return;
+
+            updateScore(team, points);
+            logEvent(
+                `${btn.textContent.toUpperCase()} ${team === "home" ? homeTeam : awayTeam} #${player}
+                 (${homeScore}–${awayScore})`
+            );
+        } else {
+            updateScore(team, points);
+        }
+    });
+});
