@@ -152,10 +152,19 @@ button.yellow-card {
 
 @media (max-width: 600px) {
     #scoreboard {
-        flex-direction: column;
+        flex-direction: row;
+    }
+
+    .team {
+        padding: 10px;
     }
 
     .team p {
-        font-size: 40px;
+        font-size: 36px;
+    }
+
+    .score-btn {
+        font-size: 13px;
+        padding: 10px;
     }
 }
