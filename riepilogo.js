@@ -31,7 +31,7 @@ function render(matchId, elId) {
 function getNextSunday() {
     const today = new Date();
     const day = today.getDay(); // 0 = domenica
-    const daysToAdd = day === 0 ? 7 : (7 - day);
+    const daysToAdd = day === 0 ? 0 : (7 - day);
     const nextSunday = new Date(today);
     nextSunday.setDate(today.getDate() + daysToAdd);
     return nextSunday;
