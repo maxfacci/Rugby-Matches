@@ -1,50 +1,44 @@
+/* 1️⃣ Costanti di stato */
+const STATUS = {
+    PRE: "---",
+    FIRST: "PRIMO TEMPO",
+    BREAK: "INTERVALLO",
+    SECOND: "SECONDO TEMPO",
+    END: "FINITA"
+};
+
+/* 2️⃣ Variabili globali */
+let matchStatus = STATUS.PRE;
 let elapsedSeconds = 0;
 let timerInterval = null;
-
 let homeScore = 0;
 let awayScore = 0;
-let firstHalfEnded = false;
-let matchFinished = false;
 
 let homeTeam = "";
 let awayTeam = "";
+
+/* 3️⃣ Riferimenti DOM (PRIMA delle funzioni) */
+const startBtn = document.getElementById("start-btn");
+const endFirstHalfBtn = document.getElementById("end-first-half-btn");
+const secondHalfBtn = document.getElementById("second-half-btn");
+const endMatchBtn = document.getElementById("end-match-btn");
 
 const timeDisplay = document.getElementById("time-display");
 const homeScoreEl = document.getElementById("home-score");
 const awayScoreEl = document.getElementById("away-score");
 
+/* 4️⃣ QUI INSERISCI updateButtons() */
+function updateButtons() {
+    startBtn.disabled = matchStatus !== STATUS.PRE;
+    endFirstHalfBtn.disabled = matchStatus !== STATUS.FIRST;
+    secondHalfBtn.disabled = matchStatus !== STATUS.BREAK;
+    endMatchBtn.disabled = matchStatus === STATUS.END;
+}
+
+/* 5️⃣ Altre funzioni (timer, saveMatch, ecc.) */
 function highlightRangers(name) {
     return name.replace(/RANGERS/gi, m => `<span class="rangers">${m}</span>`);
 }
-
-/* 🔹 LETTURA CONFIG (NOMI SQUADRE) */
-firebase.database().ref(`config/${MATCH_ID}`).once("value").then(snap => {
-    const cfg = snap.val();
-    if (!cfg) {
-        alert("Configurazione squadre mancante su Firebase");
-        return;
-    }
-
-    homeTeam = cfg.homeTeam.toUpperCase();
-    awayTeam = cfg.awayTeam.toUpperCase();
-
-    document.getElementById("home-name").innerHTML = highlightRangers(homeTeam);
-    document.getElementById("away-name").innerHTML = highlightRangers(awayTeam);
-});
-
-/* 🔹 LETTURA STATO PARTITA */
-firebase.database().ref(MATCH_ID).once("value").then(snap => {
-    const d = snap.val();
-    if (!d) return;
-
-    homeScore = d.homeScore || 0;
-    awayScore = d.awayScore || 0;
-    firstHalfEnded = d.firstHalfEnded || false;
-    matchFinished = d.finished || false;
-
-    homeScoreEl.textContent = homeScore;
-    awayScoreEl.textContent = awayScore;
-});
 
 /* 🔹 TIMER */
 function updateTimerDisplay() {
@@ -67,22 +61,90 @@ function pauseTimer() {
     timerInterval = null;
 }
 
-/* 🔹 STATO PARTITA */
-function getStatus() {
-    if (matchFinished) return "FINITA";
-    if (firstHalfEnded) return "INTERVALLO";
-    if (elapsedSeconds < 35 * 60) return "PRIMO TEMPO";
-    return "SECONDO TEMPO";
+function updateScore(team, pts) {
+    if (matchFinished) return;
+    if (team === "home") homeScore += pts;
+    else awayScore += pts;
+
+    homeScoreEl.textContent = homeScore;
+    awayScoreEl.textContent = awayScore;
+    saveMatch();
 }
+
+/* 6️⃣ Listener Firebase */
+/* 🔹 LETTURA CONFIG (NOMI SQUADRE) */
+firebase.database().ref(`config/${MATCH_ID}`).once("value").then(snap => {
+    const cfg = snap.val();
+    if (!cfg) {
+        alert("Configurazione squadre mancante su Firebase");
+        return;
+    }
+
+    homeTeam = cfg.homeTeam.toUpperCase();
+    awayTeam = cfg.awayTeam.toUpperCase();
+
+    document.getElementById("home-name").innerHTML = highlightRangers(homeTeam);
+    document.getElementById("away-name").innerHTML = highlightRangers(awayTeam);
+});
+
+/* 🔹 LETTURA STATO PARTITA */
+firebase.database().ref(MATCH_ID).once("value").then(snap => {
+    const d = snap.val();
+    if (!d) return;
+
+    homeScore = d.homeScore || 0;
+    awayScore = d.awayScore || 0;
+    
+    matchStatus = d.status || STATUS.PRE;
+
+    updateUI()
+});
+
+/* 7️⃣ Listener pulsanti STATO PARTITA */
+
+/* INIZIO */
+startBtn.onclick = () => {
+    if (matchStatus !== STATUS.PRE) return;
+
+    matchStatus = STATUS.FIRST;
+    startTimer(0);
+    saveMatch();
+};
+
+/* FINE PRIMO TEMPO */
+endFirstHalfBtn.onclick = () => {
+    if (matchStatus !== STATUS.FIRST) return;
+
+    pauseTimer();
+    matchStatus = STATUS.BREAK;
+    saveMatch();
+};
+
+/* SECONDO TEMPO */
+secondHalfBtn.onclick = () => {
+    if (matchStatus !== STATUS.BREAK) return;
+
+    matchStatus = STATUS.SECOND;
+    startTimer(35 * 60);
+    saveMatch();
+};
+
+/* FINE PARTITA */
+endMatchBtn.onclick = () => {
+    if (matchStatus === STATUS.END) return;
+
+    pauseTimer();
+    matchStatus = STATUS.END;
+    saveMatch();
+};
 
 /* 🔹 SALVATAGGIO */
 function saveMatch() {
-    firebase.database().ref(MATCH_ID).set({
+    firebase.database().ref(MATCH_ID).update({
         homeScore,
         awayScore,
-        status: getStatus(),
-        firstHalfEnded,
-        finished: matchFinished,
+        status: matchStatus,
+        timer: elapsedSeconds;
         updatedAt: Date.now()
     });
 }
@@ -93,16 +155,6 @@ function logEvent(text) {
     const li = document.createElement("li");
     li.textContent = `[${timeDisplay.textContent}] ${text}`;
     ul.appendChild(li);
-}
-
-function updateScore(team, pts) {
-    if (matchFinished) return;
-    if (team === "home") homeScore += pts;
-    else awayScore += pts;
-
-    homeScoreEl.textContent = homeScore;
-    awayScoreEl.textContent = awayScore;
-    saveMatch();
 }
 
 /* 🔹 PULSANTI PUNTEGGIO */
@@ -137,19 +189,16 @@ document.getElementById("pause-timer").onclick = pauseTimer;
 
 document.getElementById("second-half").onclick = () => {
     elapsedSeconds = 35 * 60;
-    firstHalfEnded = true;
     updateTimerDisplay();
     startTimer();
 };
 
 document.getElementById("end-first-half").onclick = () => {
-    firstHalfEnded = true;
     pauseTimer();
     saveMatch();
 };
 
 document.getElementById("end-match").onclick = () => {
-    matchFinished = true;
     pauseTimer();
     saveMatch();
 };
@@ -158,7 +207,6 @@ document.getElementById("reset-timer").onclick = () => {
     if (!confirm("Reset totale partita?")) return;
     elapsedSeconds = 0;
     homeScore = awayScore = 0;
-    firstHalfEnded = matchFinished = false;
     homeScoreEl.textContent = awayScoreEl.textContent = "0";
     saveMatch();
 };
