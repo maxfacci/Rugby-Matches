@@ -4,37 +4,17 @@
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2196f3",
-  "orientation": "portrait",
+  "theme_color": "#1e1e1e",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
-  ]
-}
-
-{
-  "config": {
-    "match_1": {
-      "homeTeam": "RANGERS ROMA",
-      "awayTeam": "MILANO RFC"
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
     },
-    "match_2": {
-      "homeTeam": "TORINO RUGBY",
-      "awayTeam": "RANGERS PARMA"
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
-  },
-  "match_1": {
-    "homeScore": 0,
-    "awayScore": 0,
-    "status": "PRIMO TEMPO",
-    "firstHalfEnded": false,
-    "finished": false
-  },
-  "match_2": {
-    "homeScore": 0,
-    "awayScore": 0,
-    "status": "PRIMO TEMPO",
-    "firstHalfEnded": false,
-    "finished": false
-  }
+  ]
 }

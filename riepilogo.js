@@ -3,8 +3,6 @@ function highlightRangers(name) {
 }
 
 function render(matchId, elId) {
-    firebase.database().ref(matchId).on("value", snap => {
-
     Promise.all([
         firebase.database().ref(`config/${matchId}`).once("value"),
         firebase.database().ref(matchId).once("value")
@@ -15,7 +13,6 @@ function render(matchId, elId) {
         if (!cfg || !d) return;
 
         const el = document.getElementById(elId);
-
         el.className = "match-box " + (d.finished ? "finished" : "live");
 
         el.innerHTML = `
@@ -36,4 +33,3 @@ firebase.database().ref("match_1").on("value", () => {
 firebase.database().ref("match_2").on("value", () => {
     render("match_2", "match2");
 });
-

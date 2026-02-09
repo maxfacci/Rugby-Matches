@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Rugby – Riepilogo</title>
+    <title>Riepilogo Partite</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="styles.css">
@@ -14,14 +14,12 @@
 </head>
 <body>
 
-<h1>Riepilogo Partite</h1>
+<h1>Riepilogo</h1>
 
-<!-- tolgo la parte che mostra i pulsandi per accedere alla singola partita
 <nav class="nav-buttons">
-    <a href="partita_1.html" class="nav-btn">Partita 1</a>
-    <a href="partita_2.html" class="nav-btn">Partita 2</a>
+    <a href="Partita_1.html" class="nav-btn">Partita 1</a>
+    <a href="Partita_2.html" class="nav-btn">Partita 2</a>
 </nav>
-... che arriva fino a qui -->                        
 
 <div id="match1" class="match-box"></div>
 <div id="match2" class="match-box"></div>
@@ -31,14 +29,17 @@ firebase.initializeApp({
   apiKey: "AIzaSyC368UY6fDHGFK2RY1bY7JZKv-5yQQpc9U",
   authDomain: "u16rugbymatches.firebaseapp.com",
   databaseURL: "https://u16rugbymatches-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "u16rugbymatches",
-  storageBucket: "u16rugbymatches.firebasestorage.app",
-  messagingSenderId: "202503600649",
-  appId: "1:202503600649:web:31f940dc24dba16c6bd6d8"
+  projectId: "u16rugbymatches"
 });
 </script>
 
 <script src="riepilogo.js"></script>
+
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 
 </body>
 </html>

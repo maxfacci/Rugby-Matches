@@ -3,54 +3,50 @@ let timerInterval = null;
 
 let homeScore = 0;
 let awayScore = 0;
-
 let firstHalfEnded = false;
 let matchFinished = false;
+
+let homeTeam = "";
+let awayTeam = "";
 
 const timeDisplay = document.getElementById("time-display");
 const homeScoreEl = document.getElementById("home-score");
 const awayScoreEl = document.getElementById("away-score");
 
-function logEvent(text) {
-    const ul = document.getElementById("events-list");
-    const li = document.createElement("li");
-    li.textContent = `[${timeDisplay.textContent}] ${text}`;
-    ul.appendChild(li);
-}
-
 function highlightRangers(name) {
     return name.replace(/RANGERS/gi, m => `<span class="rangers">${m}</span>`);
 }
 
-// 🔹 FIREBASE READ (UNA SOLA VOLTA)
-firebase.database().ref(MATCH_ID).once("value").then(snap => {
+/* 🔹 LETTURA CONFIG (NOMI SQUADRE) */
+firebase.database().ref(`config/${MATCH_ID}`).once("value").then(snap => {
     const cfg = snap.val();
     if (!cfg) {
-        alert("Configurazione squadra mancante in Firebase");
-        return
+        alert("Configurazione squadre mancante su Firebase");
+        return;
     }
-    homeTeam = cfg.homeTeam;
-    awayTeam = cfg.awayTeam;
-    homeScore = cfg.homeScore;
-    awayScore = cfg.awayScore;
-    firstHalfEnded = cfg.firstHalfEnded;
-    matchFinished = cfg.finished;
+
+    homeTeam = cfg.homeTeam.toUpperCase();
+    awayTeam = cfg.awayTeam.toUpperCase();
+
+    document.getElementById("home-name").innerHTML = highlightRangers(homeTeam);
+    document.getElementById("away-name").innerHTML = highlightRangers(awayTeam);
+});
+
+/* 🔹 LETTURA STATO PARTITA */
+firebase.database().ref(MATCH_ID).once("value").then(snap => {
+    const d = snap.val();
+    if (!d) return;
+
+    homeScore = d.homeScore || 0;
+    awayScore = d.awayScore || 0;
+    firstHalfEnded = d.firstHalfEnded || false;
+    matchFinished = d.finished || false;
 
     homeScoreEl.textContent = homeScore;
     awayScoreEl.textContent = awayScore;
-
-    document.querySelectorAll(".team h3")[0].innerHTML = highlightRangers(homeTeam);
-    document.querySelectorAll(".team h3")[1].innerHTML = highlightRangers(awayTeam);
 });
 
-// 🔹 NOMI SQUADRE
-let homeTeam = (prompt("Nome squadra di casa") || "CASA").toUpperCase();
-let awayTeam = (prompt("Nome squadra ospite") || "OSPITI").toUpperCase();
-
-<!-- document.getElementById("home-name").innerHTML = highlightRangers(homeTeam);
-document.getElementById("away-name").innerHTML = highlightRangers(awayTeam); -->
-
-// 🔹 TIMER
+/* 🔹 TIMER */
 function updateTimerDisplay() {
     const m = String(Math.floor(elapsedSeconds / 60)).padStart(2, "0");
     const s = String(elapsedSeconds % 60).padStart(2, "0");
@@ -71,17 +67,7 @@ function pauseTimer() {
     timerInterval = null;
 }
 
-function resetTimer() {
-    if (!confirm("Reset totale?")) return;
-    pauseTimer();
-    elapsedSeconds = 0;
-    homeScore = awayScore = 0;
-    firstHalfEnded = matchFinished = false;
-    homeScoreEl.textContent = awayScoreEl.textContent = "0";
-    saveMatch();
-}
-
-// 🔹 STATO
+/* 🔹 STATO PARTITA */
 function getStatus() {
     if (matchFinished) return "FINITA";
     if (firstHalfEnded) return "INTERVALLO";
@@ -89,7 +75,26 @@ function getStatus() {
     return "SECONDO TEMPO";
 }
 
-// 🔹 PUNTEGGIO
+/* 🔹 SALVATAGGIO */
+function saveMatch() {
+    firebase.database().ref(MATCH_ID).set({
+        homeScore,
+        awayScore,
+        status: getStatus(),
+        firstHalfEnded,
+        finished: matchFinished,
+        updatedAt: Date.now()
+    });
+}
+
+/* 🔹 PUNTEGGIO + EVENTI */
+function logEvent(text) {
+    const ul = document.getElementById("events-list");
+    const li = document.createElement("li");
+    li.textContent = `[${timeDisplay.textContent}] ${text}`;
+    ul.appendChild(li);
+}
+
 function updateScore(team, pts) {
     if (matchFinished) return;
     if (team === "home") homeScore += pts;
@@ -100,24 +105,35 @@ function updateScore(team, pts) {
     saveMatch();
 }
 
-// 🔹 FIREBASE WRITE (UNICO!)
-function saveMatch() {
-    firebase.database().ref(MATCH_ID).set({
-        <!-- homeTeam,
-        awayTeam, -->
-        homeScore,
-        awayScore,
-        status: getStatus(),
-        firstHalfEnded,
-        finished: matchFinished,
-        updatedAt: Date.now()
-    });
-} 
+/* 🔹 PULSANTI PUNTEGGIO */
+document.querySelectorAll(".score-btn").forEach(btn => {
+    btn.onclick = () => {
+        if (matchFinished) return;
 
-// 🔹 PULSANTI
+        const team = btn.dataset.team;
+        const pts = parseInt(btn.dataset.points);
+
+        if (btn.classList.contains("yellow")) {
+            const p = prompt("Numero giocatore (giallo)");
+            if (!p) return;
+            logEvent(`GIALLO ${team === "home" ? homeTeam : awayTeam} #${p}`);
+            return;
+        }
+
+        if (pts > 0) {
+            const p = prompt("Numero giocatore");
+            if (!p) return;
+            updateScore(team, pts);
+            logEvent(`${btn.textContent.toUpperCase()} ${team === "home" ? homeTeam : awayTeam} #${p} (${homeScore}-${awayScore})`);
+        } else {
+            updateScore(team, pts);
+        }
+    };
+});
+
+/* 🔹 ALTRI PULSANTI */
 document.getElementById("start-timer").onclick = startTimer;
 document.getElementById("pause-timer").onclick = pauseTimer;
-document.getElementById("reset-timer").onclick = resetTimer;
 
 document.getElementById("second-half").onclick = () => {
     elapsedSeconds = 35 * 60;
@@ -138,46 +154,11 @@ document.getElementById("end-match").onclick = () => {
     saveMatch();
 };
 
-document.getElementById("edit-teams").onclick = () => {
-    if (!confirm("Vuoi modificare i nomi delle squadre?")) return;
-
-    homeTeam = (prompt("Nome squadra di casa", homeTeam) || homeTeam).toUpperCase();
-    awayTeam = (prompt("Nome squadra ospite", awayTeam) || awayTeam).toUpperCase();
-
-    document.getElementById("home-name").innerHTML = highlightRangers(homeTeam);
-    document.getElementById("away-name").innerHTML = highlightRangers(awayTeam);
-
+document.getElementById("reset-timer").onclick = () => {
+    if (!confirm("Reset totale partita?")) return;
+    elapsedSeconds = 0;
+    homeScore = awayScore = 0;
+    firstHalfEnded = matchFinished = false;
+    homeScoreEl.textContent = awayScoreEl.textContent = "0";
     saveMatch();
 };
-
-document.querySelectorAll(".score-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        if (matchFinished) return;
-
-        const team = btn.dataset.team;
-        const points = parseInt(btn.dataset.points);
-
-        // Se è giallo
-        if (btn.textContent.toLowerCase().includes("giallo")) {
-            const player = prompt("Numero del giocatore (cartellino giallo):");
-            if (!player) return;
-            logEvent(`GIALLO ${team === "home" ? homeTeam : awayTeam} #${player}`);
-            saveMatch();
-            return;
-        }
-
-        // Eventi con giocatore
-        if (points > 0) {
-            const player = prompt("Numero del giocatore:");
-            if (!player) return;
-
-            updateScore(team, points);
-            logEvent(
-                `${btn.textContent.toUpperCase()} ${team === "home" ? homeTeam : awayTeam} #${player}
-                 (${homeScore}–${awayScore})`
-            );
-        } else {
-            updateScore(team, points);
-        }
-    });
-});
