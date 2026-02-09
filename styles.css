@@ -150,6 +150,18 @@ button.yellow-card {
     font-weight: bold;
 }
 
+.summary-image {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.summary-image img {
+    max-width: 150px;
+    width: 50%;
+    height: auto;
+}
+
 @media (max-width: 600px) {
     #scoreboard {
         flex-direction: row;

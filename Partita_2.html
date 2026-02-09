@@ -15,7 +15,7 @@
 
 <a href="index.html" class="nav-btn">← Riepilogo</a>
 
-<h1>Partita</h1>
+<h1>Partita 2</h1>
 
 <div id="timer">
     <span id="time-display">00:00</span><br>
@@ -32,6 +32,7 @@
     <div class="team">
         <h3 id="home-name"></h3>
         <p id="home-score">0</p>
+
         <div class="score-buttons">
             <button class="score-btn" data-team="home" data-points="5">Meta</button>
             <button class="score-btn" data-team="home" data-points="2">Trasformazione</button>
@@ -44,6 +45,7 @@
     <div class="team">
         <h3 id="away-name"></h3>
         <p id="away-score">0</p>
+
         <div class="score-buttons">
             <button class="score-btn" data-team="away" data-points="5">Meta</button>
             <button class="score-btn" data-team="away" data-points="2">Trasformazione</button>
@@ -52,7 +54,9 @@
             <button class="score-btn yellow" data-team="away" data-points="0">Giallo</button>
         </div>
     </div>
+
 </div>
+
 <ul id="events-list"></ul>
 
 <script>
@@ -60,10 +64,7 @@ firebase.initializeApp({
   apiKey: "AIzaSyC368UY6fDHGFK2RY1bY7JZKv-5yQQpc9U",
   authDomain: "u16rugbymatches.firebaseapp.com",
   databaseURL: "https://u16rugbymatches-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "u16rugbymatches",
-  storageBucket: "u16rugbymatches.firebasestorage.app",
-  messagingSenderId: "202503600649",
-  appId: "1:202503600649:web:31f940dc24dba16c6bd6d8"
+  projectId: "u16rugbymatches"
 });
 
 const MATCH_ID = "match_2"; // match_1 nell'altro file

@@ -1,3 +1,5 @@
+setSummaryTitle();
+
 function highlightRangers(name) {
     return name.replace(/RANGERS/gi, m => `<span class="rangers">${m}</span>`);
 }
@@ -24,6 +26,24 @@ function render(matchId, elId) {
             <div class="status">${d.status}</div>
         `;
     });
+}
+
+function getNextSunday() {
+    const today = new Date();
+    const day = today.getDay(); // 0 = domenica
+    const daysToAdd = day === 0 ? 7 : (7 - day);
+    const nextSunday = new Date(today);
+    nextSunday.setDate(today.getDate() + daysToAdd);
+    return nextSunday;
+}
+
+function setSummaryTitle() {
+    const d = getNextSunday();
+    const gg = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+
+    document.getElementById("summary-title").textContent =
+        `Riepilogo ${gg}/${mm}`;
 }
 
 firebase.database().ref("match_1").on("value", () => {
