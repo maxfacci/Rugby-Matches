@@ -206,6 +206,7 @@ document.getElementById("end-match").onclick = () => {
 document.getElementById("reset-timer").onclick = () => {
     if (!confirm("Reset totale partita?")) return;
     elapsedSeconds = 0;
+    matchStatus = STATUS.PRE;
     homeScore = awayScore = 0;
     homeScoreEl.textContent = awayScoreEl.textContent = "0";
     saveMatch();
