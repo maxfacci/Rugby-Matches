@@ -1,14 +1,45 @@
-const statusEl = document.getElementById("status");
+// =======================
+// DATA RIEPILOGO
+// =======================
+
+function getNextSundayOrToday() {
+    const today = new Date();
+    const day = today.getDay(); // 0 = domenica
+    const daysToAdd = day === 0 ? 0 : (7 - day);
+
+    const d = new Date(today);
+    d.setDate(today.getDate() + daysToAdd);
+    return d;
+}
+
+function setSummaryTitle() {
+    const d = getNextSundayOrToday();
+    const gg = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+
+    document.getElementById("summary-title").textContent =
+        `Riepilogo ${gg}/${mm}`;
+}
 
 setSummaryTitle();
 
-statusEl.textContent = d.status || "---";
+// =======================
+// UTILITY
+// =======================
 
 function highlightRangers(name) {
-    return name.replace(/RANGERS/gi, m => `<span class="rangers">${m}</span>`);
+    if (name.toUpperCase().includes("RANGERS")) {
+        return `<span style="color:red">${name}</span>`;
+    }
+    return name;
 }
 
-function render(matchId, elId) {
+// =======================
+// RENDER PARTITA
+// =======================
+
+function renderMatch(matchId, elementId) {
+
     Promise.all([
         firebase.database().ref(`config/${matchId}`).once("value"),
         firebase.database().ref(matchId).once("value")
@@ -18,42 +49,29 @@ function render(matchId, elId) {
         const d = matchSnap.val();
         if (!cfg || !d) return;
 
-        const el = document.getElementById(elId);
-        el.className = "match-box " + (d.finished ? "finished" : "live");
+        const el = document.getElementById(elementId);
+
+        el.className = "match-box " + (d.status === "FINITA" ? "finished" : "live");
 
         el.innerHTML = `
             <div class="teams">
-                <span>${highlightRangers(cfg.homeTeam)}</span>
+                <div>${highlightRangers(cfg.homeTeam)}</div>
                 <strong>${d.homeScore} – ${d.awayScore}</strong>
-                <span>${highlightRangers(cfg.awayTeam)}</span>
+                <div>${highlightRangers(cfg.awayTeam)}</div>
             </div>
-            <div class="status">${d.status}</div>
+            <div class="status">${d.status || "---"}</div>
         `;
     });
 }
 
-function getNextSunday() {
-    const today = new Date();
-    const day = today.getDay(); // 0 = domenica
-    const daysToAdd = day === 0 ? 0 : (7 - day);
-    const nextSunday = new Date(today);
-    nextSunday.setDate(today.getDate() + daysToAdd);
-    return nextSunday;
-}
-
-function setSummaryTitle() {
-    const d = getNextSunday();
-    const gg = String(d.getDate()).padStart(2, "0");
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-
-    document.getElementById("summary-title").textContent =
-        `Riepilogo ${gg}/${mm}`;
-}
+// =======================
+// LISTENER REALTIME
+// =======================
 
 firebase.database().ref("match_1").on("value", () => {
-    render("match_1", "match1");
+    renderMatch("match_1", "match1");
 });
 
 firebase.database().ref("match_2").on("value", () => {
-    render("match_2", "match2");
+    renderMatch("match_2", "match2");
 });

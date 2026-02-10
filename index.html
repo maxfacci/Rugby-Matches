@@ -3,48 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Riepilogo Partite</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
 
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyC368UY6fDHGFK2RY1bY7JZKv-5yQQpc9U",
+            authDomain: "u16rugbymatches.firebaseapp.com",
+            databaseURL: "https://u16rugbymatches-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "u16rugbymatches"
+            storageBucket: "u16rugbymatches.firebasestorage.app",
+            messagingSenderId: "202503600649",
+            appId: "1:202503600649:web:31f940dc24dba16c6bd6d8"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
 </head>
+
 <body>
 
-<h1 id="summary-title">Riepilogo U16</h1>
+    <h1 id="summary-title">Riepilogo U16</h1>
 
-<!-- tolgo la parte con i link alle singole partite *******************************************
-<nav class="nav-buttons">
-    <a href="Partita_1.html" class="nav-btn">Partita 1</a>
-    <a href="Partita_2.html" class="nav-btn">Partita 2</a>
-</nav> -->
+    <div class="summary-container">
 
-<div id="match1" class="match-box"></div>
-<div id="match2" class="match-box"></div>
+        <div id="match1" class="match-box"></div>
+        <div id="match2" class="match-box"></div>
 
-<div class="summary-image">
-    <img src="img/logoRangers.png" alt="Logo">
-</div>
+    </div>
 
-<script>
-firebase.initializeApp({
-  apiKey: "AIzaSyC368UY6fDHGFK2RY1bY7JZKv-5yQQpc9U",
-  authDomain: "u16rugbymatches.firebaseapp.com",
-  databaseURL: "https://u16rugbymatches-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "u16rugbymatches"
-});
-</script>
+    <div class="summary-image">
+        <img src="img/logoRangers.png" alt="Logo">
+    </div>
 
-<script src="riepilogo.js"></script>
-
-<script>
-if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
-}
-</script>
+    <script src="riepilogo.js"></script>
 
 </body>
 </html>
