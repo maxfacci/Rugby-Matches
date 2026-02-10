@@ -1,7 +1,8 @@
 {
-  "name": "Rugby Match Manager",
+  "name": "Rugby Matches",
   "short_name": "Rugby",
-  "start_url": "index.html",
+  "start_url": "/Rugby-Matches/index.html",
+  "scope": "/Rugby-Matches",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#1e1e1e",

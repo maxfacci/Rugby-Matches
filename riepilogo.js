@@ -1,3 +1,5 @@
+const statusEl = document.getElementById("status");
+
 setSummaryTitle();
 
 statusEl.textContent = d.status || "---";
