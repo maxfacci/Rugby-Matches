@@ -27,6 +27,8 @@ const startBtn = document.getElementById("start-btn");
 const endFirstHalfBtn = document.getElementById("end-first-half-btn");
 const secondHalfBtn = document.getElementById("second-half-btn");
 const endMatchBtn = document.getElementById("end-match-btn");
+const pauseBtn = document.getElementById("pause-btn");
+const resetBtn = document.getElementById("reset-btn");
 
 const timeDisplay = document.getElementById("time-display");
 const homeNameEl = document.getElementById("home-name");
@@ -143,6 +145,23 @@ secondHalfBtn.onclick = () => {
 endMatchBtn.onclick = () => {
     pauseTimer();
     matchStatus = STATUS.END;
+    saveMatch();
+};
+
+pauseBtn.onclick = pauseTimer;
+
+resetBtn.onclick = () => {
+    if (!confirm("Reset totale partita?")) return;
+
+    pauseTimer();
+    elapsedSeconds = 0;
+    homeScore = 0;
+    awayScore = 0;
+    matchStatus = STATUS.PRE;
+
+    homeScoreEl.textContent = "0";
+    awayScoreEl.textContent = "0";
+    updateTimerDisplay();
     saveMatch();
 };
 

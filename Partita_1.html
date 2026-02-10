@@ -27,7 +27,6 @@
             firebase.initializeApp(firebaseConfig);
         }
 
-        // 🔥 QUESTO È FONDAMENTALE
         const MATCH_ID = "match_1";
     </script>
 </head>
@@ -40,26 +39,51 @@
     <h2 id="away-name">---</h2>
     <div id="away-score">0</div>
 
-    <div class="controls">
-        <span id="time-display">00:00</span><br>
-        <button id="start-btn">Avvia</button>
-        <button id="end-first-half-btn">Fine 1° tempo</button>
-        <button id="second-half-btn">Secondo tempo</button>
-        <button id="end-match-btn">Fine Partita</button>
-        <button id="pause-timer">Pausa</button>
-        <button id="reset-timer">Reset</button>
+    <div class="timer-controls">
+      <div id="time-display">00:00</div>
+
+      <button id="start-btn">Avvia</button>
+      <button id="pause-btn">Pausa</button>
+      <button id="reset-btn">Reset</button>
+
+      <button id="end-first-half-btn">Fine 1° tempo</button>
+      <button id="second-half-btn">Secondo tempo</button>
+      <button id="end-match-btn">Fine Partita</button>
     </div>
 
-    <div class="score-buttons">
-        <button data-team="home" data-points="5">Meta</button>
-        <button data-team="home" data-points="2">Trasformazione</button>
-        <button data-team="home" data-points="3">Punizione/Drop</button>
-        <button data-team="home" data-points="-1">-1</button>
+    <div class="match-container">
 
-        <button data-team="away" data-points="5">Meta</button>
-        <button data-team="away" data-points="2">Trasformazione</button>
-        <button data-team="away" data-points="3">Punizione/Drop</button>
-        <button data-team="away" data-points="-1">-1</button>
+      <div class="teams">
+
+        <!-- CASA -->
+        <div class="team home">
+          <h2 id="home-name">---</h2>
+          <div id="home-score" class="score">0</div>
+
+          <div class="buttons">
+            <button class="score-btn" data-team="home" data-points="5">Meta</button>
+            <button class="score-btn" data-team="home" data-points="2">Trasf.</button>
+            <button class="score-btn" data-team="home" data-points="3">Puniz.</button>
+            <button class="score-btn" data-team="home" data-points="-1">-1</button>
+            <button class="score-btn yellow" data-team="home">Giallo</button>
+          </div>
+        </div>
+
+        <!-- TRASFERTA -->
+        <div class="team away">
+          <h2 id="away-name">---</h2>
+          <div id="away-score" class="score">0</div>
+
+          <div class="buttons">
+            <button class="score-btn" data-team="away" data-points="5">Meta</button>
+            <button class="score-btn" data-team="away" data-points="2">Trasf.</button>
+            <button class="score-btn" data-team="away" data-points="3">Puniz.</button>
+            <button class="score-btn" data-team="away" data-points="-1">-1</button>
+            <button class="score-btn yellow" data-team="away">Giallo</button>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- 🔥 SEMPRE ALLA FINE -->
